@@ -18,6 +18,9 @@ void main()
         char fileName[6];
         int commandIndex;
 
+        char directory[512];
+        int directoryIndex;
+
         // Initializing variables for repeated use of type commands
         sectorsRead = 0;
 
@@ -71,6 +74,31 @@ void main()
             // calls handleInterrupt21() case 4: executeProgram()
             syscall(4, fileName, 0, 0);
         }
+
+        // checking if user wants to list the contents of the directory
+        else if (commandInput[0] == 'd' &&
+                 commandInput[1] == 'i' &&
+                 commandInput[2] == 'r' &&
+                 commandInput[3] == ' ')
+        {
+            syscall(2, directory, 2);
+
+            for (directoryIndex = 0; directoryIndex < 512; directoryIndex += 32)
+            {
+                if (directory[directoryIndex] != 0)
+                {
+                    syscall(9, directory[directoryIndex]);
+                    syscall(9, directory[directoryIndex + 1]);
+                    syscall(9, directory[directoryIndex + 2]);
+                    syscall(9, directory[directoryIndex + 3]);
+                    syscall(9, directory[directoryIndex + 4]);
+                    syscall(9, directory[directoryIndex + 5]);
+                    syscall(9, '\r');
+                    syscall(9, '\n');
+                }
+            }
+        }
+
 
         else
         {

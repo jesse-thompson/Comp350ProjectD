@@ -296,6 +296,8 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
         case 5:
             terminate();
             break;
+        case 9:
+            printChar(bx);
         default:
             printString("No interrupt function correlated with AX number");
 
