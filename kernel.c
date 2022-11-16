@@ -119,14 +119,14 @@ void readSector(char* buffer, int sector)
     interrupt(0x13, 2*256+1, buffer, sector+1, 0x80);
 }
 
-// Class notes 11/3/22
-// TO find a file follow these steps:
-// 1. Read the directory using readSector(place to put it, what sector you want to read);
-// 2. Step through directory, one line at a time, and compare the lines to the file name
+void writeSector(char* buffer, int sector)
+{
+    interrupt(0x13, 3*256+1, buffer, sector+1, 0x80);
+}
+
 
 void readFile(char* fileName, char* buffer, int* sectorsRead)
 {
-    //int printIndex; // Index used for printing out the characters of the directory
     int correctCharIndex; // Index used for comparing how many characters in fileName match with directory[fileEntry]
     int correctChars; // The number of matching characters when comparing fileName and directory[fileEntry]
 
@@ -152,14 +152,6 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
         if (pad == 1)
             fileName[i] = '\0';
     }
-
-    // printing out the contents of directory, just to see what's currently in there
-//    printString("Printing directory: \n\r");
-//    for (printIndex = 0; printIndex < 512; printIndex++)
-//    {
-//        printChar(directory[printIndex]);
-//    }
-//    printString("\n\r");
 
 
     for (fileEntry = 0; fileEntry < 512; fileEntry += 32)
@@ -296,8 +288,12 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
         case 5:
             terminate();
             break;
+        case 6:
+            writeSector(bx, cx);
+            break;
         case 9:
             printChar(bx);
+            break;
         default:
             printString("No interrupt function correlated with AX number");
 

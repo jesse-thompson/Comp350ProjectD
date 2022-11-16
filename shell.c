@@ -24,6 +24,10 @@ void main()
         // Initializing variables for repeated use of type commands
         sectorsRead = 0;
 
+        // Testing writeSector
+        //syscall(6, "Testing writeSector", 12);
+        syscall(6, "Another test of writeSector", 13);
+
         for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
         {
             fileBuffer[bufferIndex] = '\0';
