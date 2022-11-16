@@ -7,6 +7,9 @@
 // Sean Tammelleo
 
 
+// Test coment, please ignore
+
+
 void printChar(char);
 void printString(char*);
 void readString(char*);
