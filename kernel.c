@@ -8,7 +8,7 @@
 
 
 // Test coment, please ignore
-
+// Another test
 
 void printChar(char);
 void printString(char*);
