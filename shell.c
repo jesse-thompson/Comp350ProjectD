@@ -76,10 +76,10 @@ void main()
         }
 
         // checking if user wants to list the contents of the directory
+        // This is a pretty simple version of dir, later on we can make it print out the sectors/size of the files too
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'i' &&
-                 commandInput[2] == 'r' &&
-                 commandInput[3] == ' ')
+                 commandInput[2] == 'r')
         {
             syscall(2, directory, 2);
 
@@ -87,6 +87,7 @@ void main()
             {
                 if (directory[directoryIndex] != 0)
                 {
+                    // syscall(9) just calls printChar as an interrupt, not part of the project but is incredibly helpful here
                     syscall(9, directory[directoryIndex]);
                     syscall(9, directory[directoryIndex + 1]);
                     syscall(9, directory[directoryIndex + 2]);
