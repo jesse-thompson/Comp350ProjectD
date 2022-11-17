@@ -15,9 +15,12 @@ void printString(char*);
 void readString(char*);
 void readSector(char*, int);
 void readFile(char*, char*, int*);
-void executeProgram(char* name);
+void executeProgram(char*);
 void terminate();
 void handleInterrupt21(int,int,int,int);
+void writeSector(char*, int);
+void deleteFile(char*);
+
 
 void main()
 {
@@ -124,6 +127,33 @@ void writeSector(char* buffer, int sector)
     interrupt(0x13, 3*256+1, buffer, sector+1, 0x80);
 }
 
+void deleteFile(char* fileName)
+{
+    char dir[512];
+    char map[512];
+    int fileLoc[];
+
+    readSector(dir, 2);
+    readSector(map, 3);
+
+    for (int entry = 0; entry < 512; entry += 32)
+    {
+        dir[entry] =
+    }
+    for (int i = 6; i <; ++i)
+    {
+        map[dir[entry + i]] = 0;
+        map[<sector number >] = 0;
+    }
+
+    // Load the Directory and Map to 512 byte character arrays dir and map
+    // Search through the directory and try to find the file name.
+    // Set the first byte of the file name to '\0'.
+    // Step through the sectors numbers listed as belonging to the file. For each sector,
+    // set the corresponding Map byte to 0. For example, if sector 7 belongs to the file,
+    // set map[7] to 0
+    // Write the character arrays holding the Directory and Map back to their appropriate sectors.
+}
 
 void readFile(char* fileName, char* buffer, int* sectorsRead)
 {
@@ -293,6 +323,9 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
             break;
         case 9:
             printChar(bx);
+            break;
+        case 10:
+            deleteFile(bx);
             break;
         default:
             printString("No interrupt function correlated with AX number");

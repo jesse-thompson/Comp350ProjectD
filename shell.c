@@ -4,8 +4,6 @@
 // Sean Tammelleo
 
 
-void takeCommand(char* command);
-
 void main()
 {
     while (1)
@@ -83,7 +81,8 @@ void main()
         // This is a pretty simple version of dir, later on we can make it print out the sectors/size of the files too
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'i' &&
-                 commandInput[2] == 'r')
+                 commandInput[2] == 'r' &&
+                 commandInput[3] == ' ')    // added a space at the end - Jesse 11/16 23:35
         {
             syscall(2, directory, 2);
 
@@ -102,6 +101,16 @@ void main()
                     syscall(9, '\n');
                 }
             }
+        }
+
+        // delete file command
+        else if (commandInput[0] == 'd' &&
+                 commandInput[1] == 'e' &&
+                 commandInput[2] == 'l' &&
+                 commandInput[3] == ' ')
+        {
+            // calls interrupt 10 deleteFile(char* fileName)
+        syscall(10, fileName)
         }
 
 

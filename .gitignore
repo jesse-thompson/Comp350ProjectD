@@ -5,6 +5,8 @@
 *.jar
 *.doc
 *.doc#
+*.odt
+*.odt#
 kernel
 bootload
 shell
