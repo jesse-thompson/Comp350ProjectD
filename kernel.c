@@ -161,7 +161,8 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
         // fileName has to match identically with the first 6 entries of file stored in the directory
         for (correctCharIndex = 0; correctCharIndex < 6; correctCharIndex++)
         {
-            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex])
+            // The second clause is important here, since if the file in directory starts with a 0, that means it's been marked for delete
+            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex] && directory[fileEntry] != 0)
             {
                 correctChars++;
             }
@@ -183,7 +184,6 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
                 printChar('d');
                 printChar('\r');
                 printChar('\n');
-
 
 
                 // Now that we've found the file, we need to find what sectors the file is on
