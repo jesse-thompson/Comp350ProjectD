@@ -192,7 +192,7 @@ void deleteFile(char* fileName)
 
     // writes dir and map char arrays back into their appropriate sectors
     writeSector(dir, 2);
-    writeSector(map, 3)
+    writeSector(map, 3);
 }
 
 void readFile(char* fileName, char* buffer, int* sectorsRead)
