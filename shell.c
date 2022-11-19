@@ -117,7 +117,8 @@ void main()
             }
         }
 
-        // FIXME: returns "Error: not a valid command"
+        // FIXME: returns "Error: not a valid command" making length and syscall
+        //  args match working commands didn't work
         // delete file command
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'e' &&
