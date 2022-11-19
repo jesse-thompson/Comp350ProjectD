@@ -91,6 +91,7 @@ void main()
             syscall(4, fileName, 0, 0);
         }
 
+        // FIXME: returns "Error: not a valid command"
         // checking if user wants to list the contents of the directory
         // This is a pretty simple version of dir, later on we can make it print out the sectors/size of the files too
         else if (commandInput[0] == 'd' &&
@@ -117,6 +118,7 @@ void main()
             }
         }
 
+        // FIXME: returns "Error: not a valid command"
         // delete file command
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'e' &&
