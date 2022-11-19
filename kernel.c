@@ -131,42 +131,68 @@ void deleteFile(char* fileName)
 {
     char dir[512];
     char map[512];
-    int fileLoc[3];
 
     readSector(dir, 2);
     readSector(map, 3);
 
     int correctCharIndex;
     int correctChars;
-    int sectorIndex;
 
     for (int dirEntry = 0; dirEntry < 512; dirEntry += 32)
     {
         correctChars = 0;
 
-        for (correctCharIndex = 0; correctCharIndex < 512; correctCharIndex +=32)
+        for (correctCharIndex = 0; correctCharIndex < 6; correctCharIndex++)
         {
-            if (fileName[correctCharIndex] == dir[entry = correctCharIndex])
+            if (fileName[correctCharIndex] == dir[dirEntry + correctCharIndex] && dir[dirEntry] != 0)
             {
                 correctChars++;
             }
 
+            if (correctChars == 6)
+            {
+                printChar('F');
+                printChar('i');
+                printChar('l');
+                printChar('e');
+                printChar(' ');
+                printChar('f');
+                printChar('o');
+                printChar('u');
+                printChar('n');
+                printChar('d');
+                printChar('\r');
+                printChar('\n');
+
+                dir[dirEntry + 1] = '\0';   // sets first byte of file name to 0
+
+                int fileMapLoc[26]; // 26 possible map locations (dir entry size:32, 32 - 6(for file name) = 26
+
+                // steps through sector locations of dir entry, changing them to 0
+                // breaks when it finds a 0
+                for (int i = 6; i < 32; ++i) {
+                    if(dir[dirEntry + 6] != 0)
+                    {
+                        fileMapLoc[i - 6] = dir[dirEntry + 6];
+                        dir[dirEntry + 6] = '\0';
+                    } else break;
+                }
+
+                // steps through map, changing marked locations to 0
+                // breaks when it finds a 0 in the file's map location (fileMapLoc)
+                for (int j = 0; j < 26; ++j) {
+                    if (fileMapLoc[j] != 0) map[fileMapLoc[j]] = '\0';
+                    else break;
+                }
+
+                terminate()
+            }
         }
-        dir[entry] =
-    }
-    for (int i = 6; i <; ++i)
-    {
-        map[dir[entry + i]] = 0;
-        map[<sector number >] = 0;
     }
 
-    // Load the Directory and Map to 512 byte character arrays dir and map
-    // Search through the directory and try to find the file name.
-    // Set the first byte of the file name to '\0'.
-    // Step through the sectors numbers listed as belonging to the file. For each sector,
-    // set the corresponding Map byte to 0. For example, if sector 7 belongs to the file,
-    // set map[7] to 0
-    // Write the character arrays holding the Directory and Map back to their appropriate sectors.
+    // writes dir and map char arrays back into their appropriate sectors
+    writeSector(dir, 2);
+    writeSector(map, 3)
 }
 
 void readFile(char* fileName, char* buffer, int* sectorsRead)
