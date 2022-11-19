@@ -4,7 +4,7 @@
 // Sean Tammelleo
 
 
-void takeCommand(char* command);
+void takeCommand(char* command);    // will this even be needed?
 
 void main()
 {
@@ -124,7 +124,7 @@ void main()
                  commandInput[3] == ' ')
         {
             // calls interrupt 10 deleteFile(char* fileName)
-        syscall(10, fileName)
+            syscall(10, fileName);
         }
 
 

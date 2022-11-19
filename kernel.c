@@ -131,14 +131,17 @@ void deleteFile(char* fileName)
 {
     char dir[512];
     char map[512];
+    int correctCharIndex;
+    int correctChars;
+    int dirEntry;
+    int fileMapLoc[26]; // 26 possible map locations (dir entry size:32, 32 - 6(for file name) = 26
+    int dirIndex;
+    int mapIndex;
 
     readSector(dir, 2);
     readSector(map, 3);
 
-    int correctCharIndex;
-    int correctChars;
-
-    for (int dirEntry = 0; dirEntry < 512; dirEntry += 32)
+    for (dirEntry = 0; dirEntry < 512; dirEntry += 32)
     {
         correctChars = 0;
 
@@ -149,7 +152,7 @@ void deleteFile(char* fileName)
                 correctChars++;
             }
 
-            if (correctChars == 6)
+            else if (correctChars == 6)
             {
                 printChar('F');
                 printChar('i');
@@ -166,26 +169,26 @@ void deleteFile(char* fileName)
 
                 dir[dirEntry + 1] = '\0';   // sets first byte of file name to 0
 
-                int fileMapLoc[26]; // 26 possible map locations (dir entry size:32, 32 - 6(for file name) = 26
-
                 // steps through sector locations of dir entry, changing them to 0
                 // breaks when it finds a 0
-                for (int i = 6; i < 32; ++i) {
+                for (dirIndex = 6; dirIndex < 32; ++dirIndex)
+                {
                     if(dir[dirEntry + 6] != 0)
                     {
-                        fileMapLoc[i - 6] = dir[dirEntry + 6];
+                        fileMapLoc[dirIndex - 6] = dir[dirEntry + 6];
                         dir[dirEntry + 6] = '\0';
                     } else break;
                 }
 
                 // steps through map, changing marked locations to 0
                 // breaks when it finds a 0 in the file's map location (fileMapLoc)
-                for (int j = 0; j < 26; ++j) {
-                    if (fileMapLoc[j] != 0) map[fileMapLoc[j]] = '\0';
+                for (mapIndex = 0; mapIndex < 26; ++mapIndex)
+                {
+                    if (fileMapLoc[mapIndex] != 0) map[fileMapLoc[mapIndex]] = '\0';
                     else break;
                 }
 
-                terminate()
+                terminate();
             }
         }
     }
