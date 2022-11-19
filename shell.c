@@ -96,8 +96,7 @@ void main()
         // This is a pretty simple version of dir, later on we can make it print out the sectors/size of the files too
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'i' &&
-                 commandInput[2] == 'r' &&
-                 commandInput[3] == ' ')    // added a space at the end - Jesse 11/16 23:35
+                 commandInput[2] == 'r')
         {
             syscall(2, directory, 2);
 
