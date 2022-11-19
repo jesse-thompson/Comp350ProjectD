@@ -4,6 +4,8 @@
 // Sean Tammelleo
 
 
+void takeCommand(char* command);
+
 void main()
 {
     while (1)
@@ -19,13 +21,18 @@ void main()
         char directory[512];
         int directoryIndex;
 
+        char* testMessage;
+
         // Initializing variables for repeated use of type commands
         sectorsRead = 0;
+        testMessage = "Test message for write sector. ";
+
 
         // Testing writeSector
-        //syscall(6, "Testing writeSector", 12);
-        syscall(6, "Another test of writeSector", 13);
+        syscall(6, testMessage, 26, 0);
+        //syscall(6, "Another test of writeSector", 25);
 
+        // Clearing the fileBuffer
         for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
         {
             fileBuffer[bufferIndex] = '\0';
@@ -42,6 +49,13 @@ void main()
             fileName[commandIndex] = commandInput[commandIndex + 5];
         }
 
+        if (commandInput[0] == 't' &&
+            commandInput[1] == 'e' &&
+            commandInput[2] == 's' &&
+            commandInput[3] == 't')
+        {
+            syscall(6, " If you can read this, then the test shell command worked.", 27, 0);
+        }
 
         // checking if the user wants to use the type command
         // this if statement is a little scuffed, but it'll work

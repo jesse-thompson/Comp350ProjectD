@@ -131,13 +131,27 @@ void deleteFile(char* fileName)
 {
     char dir[512];
     char map[512];
-    int fileLoc[];
+    int fileLoc[3];
 
     readSector(dir, 2);
     readSector(map, 3);
 
-    for (int entry = 0; entry < 512; entry += 32)
+    int correctCharIndex;
+    int correctChars;
+    int sectorIndex;
+
+    for (int dirEntry = 0; dirEntry < 512; dirEntry += 32)
     {
+        correctChars = 0;
+
+        for (correctCharIndex = 0; correctCharIndex < 512; correctCharIndex +=32)
+        {
+            if (fileName[correctCharIndex] == dir[entry = correctCharIndex])
+            {
+                correctChars++;
+            }
+
+        }
         dir[entry] =
     }
     for (int i = 6; i <; ++i)
@@ -191,7 +205,8 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
         // fileName has to match identically with the first 6 entries of file stored in the directory
         for (correctCharIndex = 0; correctCharIndex < 6; correctCharIndex++)
         {
-            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex])
+            // The second clause is important here, since if the file in directory starts with a 0, that means it's been marked for delete
+            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex] && directory[fileEntry] != 0)
             {
                 correctChars++;
             }
@@ -213,7 +228,6 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
                 printChar('d');
                 printChar('\r');
                 printChar('\n');
-
 
 
                 // Now that we've found the file, we need to find what sectors the file is on
