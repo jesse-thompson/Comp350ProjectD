@@ -23,7 +23,6 @@ gcc -o loadFile loadFile.c
 ./loadFile kernel
 ./loadFile shell
 ./loadFile message.txt
-./loadFile dirtst.txt
 ./loadFile tstpr1
 ./loadFile tstpr2
 

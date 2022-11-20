@@ -30,7 +30,7 @@ void main()
 
         // Testing writeSector
         syscall(6, testMessage, 26, 0);
-        //syscall(6, "Another test of writeSector", 25);
+        //syscall(6, "Another test of writeSector", 25, 0);
 
         // Clearing the fileBuffer
         for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
@@ -114,6 +114,21 @@ void main()
                     syscall(9, '\n');
                 }
             }
+        }
+
+
+        
+        // I have no compiling errors on my end
+        // I chaged the delete shell command from del<space> to dele<space>, since fileName = commandInput[5] through commandInput[10]
+        // delete file command
+        else if (commandInput[0] == 'd' &&
+                 commandInput[1] == 'e' &&
+                 commandInput[2] == 'l' &&
+                 commandInput[3] == 'e' &&
+                 commandInput[4] == ' ')
+        {
+            // calls interrupt 10 deleteFile(char* fileName)
+            syscall(10, fileName, 0, 0, 0);
         }
 
 

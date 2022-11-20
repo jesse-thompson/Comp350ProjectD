@@ -208,6 +208,122 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
     }
 }
 
+
+void deleteFile(char* fileName)
+{
+    char dir[512];
+    char map[512];
+    int correctCharIndex;
+    int correctChars;
+    int dirEntry;
+    int fileMapLoc[26]; // 26 possible map locations (dir entry size:32, 32 - 6(for file name) = 26
+    int dirIndex;
+    int mapIndex;
+
+
+    printChar('T');
+    printChar('r');
+    printChar('y');
+    printChar('i');
+    printChar('n');
+    printChar('g');
+    printChar(' ');
+    printChar('t');
+    printChar('o');
+    printChar(' ');
+    printChar('d');
+    printChar('e');
+    printChar('l');
+    printChar('e');
+    printChar('t');
+    printChar('e');
+    printChar(' ');
+    printChar('f');
+    printChar('i');
+    printChar('l');
+    printChar('e');    
+    printChar('\r');
+    printChar('\n');
+
+
+    readSector(dir, 2); // Directory is at sector 2
+    readSector(map, 1); // Map is at sector 1
+
+    for (dirEntry = 0; dirEntry < 512; dirEntry += 32)
+    {
+        correctChars = 0;
+
+        for (correctCharIndex = 0; correctCharIndex < 6; correctCharIndex++)
+        {
+            if (fileName[correctCharIndex] == dir[dirEntry + correctCharIndex] && dir[dirEntry] != 0)
+            {
+                correctChars++;
+            }
+
+            if (correctChars == 6)
+            {
+                printChar('F');
+                printChar('i');
+                printChar('l');
+                printChar('e');
+                printChar(' ');
+                printChar('f');
+                printChar('o');
+                printChar('u');
+                printChar('n');
+                printChar('d');
+                printChar('\r');
+                printChar('\n');
+
+                dir[dirEntry] = '\0';   // sets first byte of file name to 0
+
+                // steps through sector locations of dir entry, changing them to 0
+                // breaks when it finds a 0
+                for (dirIndex = 6; dirIndex < 32; ++dirIndex)
+                {
+                    if (dir[dirEntry + dirIndex] == '\0')
+                    {
+                        printChar('B');
+                        printChar('r');
+                        printChar('e');
+                        printChar('a');
+                        printChar('k');
+                        printChar('i');
+                        printChar('n');
+                        printChar('g');
+                        printChar('\r');
+                        printChar('\n');
+                        
+                        break;
+                    }
+                    else
+                    {
+                        fileMapLoc[dirIndex - 6] = dir[dirEntry + dirIndex];   
+                        dir[dirEntry + dirIndex] = '\0';
+                        
+                    }
+
+                }
+
+                // steps through map, changing marked locations to 0
+                // breaks when it finds a 0 in the file's map location (fileMapLoc)
+                for (mapIndex = 0; mapIndex < 26; ++mapIndex)
+                {
+                    if (fileMapLoc[mapIndex] != 0) map[fileMapLoc[mapIndex]] = '\0';
+                    else break;
+                }
+
+                terminate();
+            }
+        }
+    }
+
+    // writes dir and map char arrays back into their appropriate sectors
+    writeSector(dir, 2);
+    writeSector(map, 1);
+}
+
+
 void executeProgram(char* name)
 {
     int index = 0;
@@ -293,6 +409,9 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
             break;
         case 9:
             printChar(bx);
+            break;
+        case 10:
+            deleteFile(bx);
             break;
         default:
             printString("No interrupt function correlated with AX number");
