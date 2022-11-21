@@ -16,7 +16,13 @@ void main()
         int sectorsRead;
 
         char fileName[6];
+        char fileNameTwo[6];
         int commandIndex;
+        int currentIndex;
+
+        char directory[512];
+        int directoryIndex;
+
 
         // Initializing variables for repeated use of type commands
         sectorsRead = 0;
@@ -71,6 +77,41 @@ void main()
             // calls handleInterrupt21() case 4: executeProgram()
             syscall(4, fileName, 0, 0);
         }
+        
+                // Checking if copy command is being called
+        else if (commandInput[0] == 'c' &&
+                 commandInput[1] == 'o' &&
+                 commandInput[2] == 'p' &&
+                 commandInput[3] == 'y' &&
+                 commandInput[4] == ' ')
+        {
+                // Reset buffer index
+                sectorsRead = 0;
+                for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
+                {
+                    fileBuffer[bufferIndex] = '\0';
+                }
+
+                // Getting name of file to be created
+                for (currentIndex = 0; currentIndex < 6; currentIndex++)
+                {
+                        fileNameTwo[currentIndex] = commandInput[currentIndex + 12];
+                }
+
+                // Reading original file
+                syscall(3, fileName, fileBuffer, &sectorsRead);
+
+                // If original file name found, write file contents to new file
+                if (sectorsRead > 0)
+                {
+                        syscall(8, fileBuffer, fileNameTwo, sectorsRead);
+                }
+                else
+                {
+                        syscall(0, "Error! File not found!", 0, 0);
+                }
+        }
+
 
         else
         {
