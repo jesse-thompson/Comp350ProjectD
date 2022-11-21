@@ -15,54 +15,23 @@ void printString(char*);
 void readString(char*);
 void readSector(char*, int);
 void readFile(char*, char*, int*);
+void writeFile(char*, char*, int);
 void executeProgram(char* name);
 void terminate();
 void handleInterrupt21(int,int,int,int);
 
 void main()
 {
-    // Setting up for readString
-    char line[80];
-
-    // Setting up readSector
-    char sectorBuffer[512];
-
-    // Setting up readFile
-    char fileBuffer [13312];
-    char* fileName = "messag";
-    int sectorsRead;
+    // TJ writeFile() test
+    char* buffer = "TJ test text";
+    char* filename = "tjtest";
+    int numberOfSectors = 1;
+    writeFile(buffer, filename, numberOfSectors);
 
     // These two functions are for steps 4-6
     makeInterrupt21();
-
+    
     handleInterrupt21(4, "shell", 0, 0);
-
-
-
-    // The following code block was for testing functions for steps 1-3
-
-    // Testing readFile as a function
-    //readFile(fileName, fileBuffer, &sectorsRead); // Just a test of the function
-
-    // Testing readFIle as an interrupt
-//    handleInterrupt21(3, fileName, fileBuffer, &sectorsRead);
-//
-//    if (sectorsRead > 0)
-//    {
-//        printString(fileBuffer);
-//    }
-//    else
-//    {
-//        printString("Error: File not found\n\r");
-//    }
-
-    // Testing executeProgram as an interrupt
-    //handleInterrupt21(4, "tstp", 0, 0);
-
-    // Testing terminate by executing tstpr2
-    //handleInterrupt21(4, "tstpr2", 0, 0);
-
-
 
     while(1);
 }
@@ -161,7 +130,8 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
         // fileName has to match identically with the first 6 entries of file stored in the directory
         for (correctCharIndex = 0; correctCharIndex < 6; correctCharIndex++)
         {
-            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex])
+            // The second clause is important here, since if the file in directory starts with a 0, that means it's been marked for delete
+            if (fileName[correctCharIndex] == directory[fileEntry + correctCharIndex] && directory[fileEntry] != 0)
             {
                 correctChars++;
             }
@@ -185,7 +155,6 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
                 printChar('\n');
 
 
-
                 // Now that we've found the file, we need to find what sectors the file is on
                 // Starting the index at 6 since the sectors that the file are stored on also start at index 6
                 for (sectorIndex = 6; sectorIndex < 32; sectorIndex++)
@@ -206,6 +175,64 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
             }
         }
     }
+}
+
+void writeFile(char* buffer, char* filename, int numberOfSectors)
+{
+    char directory[512];
+    char map[512];
+    
+    int dirEntry;
+    int sectorNumber;
+    int i;
+
+    readSector(map,1);
+    readSector(directory,2);
+
+    //Find an empty directory entry, store the entry number in dirEntry
+    for(dirEntry = 3; dirEntry < 16; dirEntry++)
+    {
+        if(directory[dirEntry*32] == '\0')
+        {
+            break;
+        }
+    }
+
+    //Set the file name in the directory
+    //Need to account for file names less than length 6. Will come back to it.
+    for(i = 0; i < 6; i++)
+    {
+        directory[(dirEntry*32)+i] = filename[i];
+    }
+
+    //Run this loop once for each sector the file will take up. Each time it will find an empty
+    //  sector on the map, insert it's sector number into the directory, write 512 bytes of the file
+    //  to that sector, and then mark the sector as used on the map.
+    for(i = 0; i < numberOfSectors; i++)
+    {
+        //Find an empty sector on the map
+        for(sectorNumber = 3; sectorNumber < 512; sectorNumber++)
+        {
+            if(map[sectorNumber] == 0x00)
+            {
+                break;
+            }    
+        }
+        
+        //Insert that sector number into the directory
+        directory[(dirEntry*32)+6+i] = (char)sectorNumber;
+        
+        //Write 512 bits of the file to that sector
+        writeSector(buffer, sectorNumber);
+        
+        //Mark the space as occupied on the map
+        map[sectorNumber] = 0xFF;
+        
+        //Write the directory and map back to the disk
+        writeSector(map, 1);
+        writeSector(directory, 2);
+    }
+    
 }
 
 void executeProgram(char* name)
@@ -291,14 +318,14 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
         case 6:
             writeSector(bx, cx);
             break;
+        case 8:
+            writeFile(bx, cx, dx);
+            break;
         case 9:
             printChar(bx);
             break;
         default:
             printString("No interrupt function correlated with AX number");
 
-
     }
-
-
 }
