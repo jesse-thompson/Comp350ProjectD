@@ -54,12 +54,12 @@ void main()
             commandInput[2] == 's' &&
             commandInput[3] == 't')
         {
-            syscall(6, " If you can read this, then the test shell command worked.", 27, 0);
+            syscall(0, " If you can read this, then the test shell command worked.", 27, 0);
         }
 
         // checking if the user wants to use the type command
         // this if statement is a little scuffed, but it'll work
-        if (commandInput[0] == 't' &&
+        else if (commandInput[0] == 't' &&
             commandInput[1] == 'y' &&
             commandInput[2] == 'p' &&
             commandInput[3] == 'e' &&

@@ -37,7 +37,7 @@ void main()
     // These two functions are for steps 4-6
     makeInterrupt21();
 
-    handleInterrupt21(4, "shell", 0, 0);
+    executeProgram("shell");
 
 
 
