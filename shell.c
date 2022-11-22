@@ -28,8 +28,7 @@ void main()
         sectorsRead = 0;
 
         // Testing writeSector
-        //syscall(6, "Testing writeSector", 12);
-        syscall(6, "Another test of writeSector", 13);
+       
 
         for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
         {
@@ -109,41 +108,43 @@ void main()
         }
 
 	// Checking if copy command is being called
-	else if (commandInput[0] == 'c' &&
-		 commandInput[1] == 'o' &&
-		 commandInput[2] == 'p' &&
-		 commandInput[3] == 'y' &&
-		 commandInput[4] == ' ')
-	{
-		// Reset buffer index
-        	for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
-       		{
-        	    fileBuffer[bufferIndex] = '\0';
-	        }
+        else if (commandInput[0] == 'c' &&
+                 commandInput[1] == 'o' &&
+                 commandInput[2] == 'p' &&
+                 commandInput[3] == 'y' &&
+                 commandInput[4] == ' ')
+        {
+                // Reset buffer index
+                for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
+                {
+                    fileBuffer[bufferIndex] = '\0';
+                }
 
-		// Getting name of file to be created
-		for (currentIndex = 0; currentIndex < 6; currentIndex++)
-		{//copy messag essag2
-			fileNameTwo[currentIndex] = commandInput[currentIndex + 12];
-		}
-		syscall(0,fileNameTwo,0,0);
-		// Reading original file
+                // Getting name of file to be created
+                for (currentIndex = 0; currentIndex < 6; currentIndex++)
+                {//copy messag essag2
+                        fileNameTwo[currentIndex] = commandInput[currentIndex + 12];
+                }
+                syscall(0,fileNameTwo,0,0);
+                // Reading original file
 
-		syscall(3, fileName, fileBuffer, &sectorsReadTwo);
-		syscall(0,fileName,0,0);
+                syscall(3, fileName, fileBuffer, &sectorsReadTwo);
+                syscall(0,fileName,0,0);
+                syscall(0,"Printing out buffer",0,0);
+                syscall(0,fileBuffer,0,0);
+                // If original file name found, write file contents to new file
+                if (sectorsReadTwo > 0)
+                {
+                        syscall(8, fileBuffer, fileNameTwo, sectorsReadTwo);
+                        syscall(0, "File found and writing contents", 0, 0);
 
-		// If original file name found, write file contents to new file
-		if (sectorsReadTwo > 0)
-		{
-			syscall(8, fileBuffer, fileNameTwo, sectorsReadTwo);
-			syscall(0, "File found and writing contents", 0, 0);
+                }
+                else
+                {
+                        syscall(0, "Error! File not found!", 0, 0);
+                }
+        }
 
-		}
-		else
-		{
-			syscall(0, "Error! File not found!", 0, 0);
-		}
-	}
 
         else
         {
