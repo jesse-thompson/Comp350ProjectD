@@ -70,11 +70,13 @@ void main()
     while(1);
 }
 
+// syscall 9
 void printChar(char c)
 {
     interrupt(0x10, 0xe*256+c,0,0,0);
 }
 
+// syscall 0
 void printString(char* chars)
 {
     int increment = 0;
@@ -85,6 +87,7 @@ void printString(char* chars)
     }
 }
 
+// syscall 1
 void readString(char* chars)
 {
     int currIndex = 0;
@@ -117,16 +120,19 @@ void readString(char* chars)
     chars[currIndex+2] = 0x0;
 }
 
+// syscall 2
 void readSector(char* buffer, int sector)
 {
     interrupt(0x13, 2*256+1, buffer, sector+1, 0x80);
 }
 
+// syscall 6
 void writeSector(char* buffer, int sector)
 {
     interrupt(0x13, 3*256+1, buffer, sector+1, 0x80);
 }
 
+// syscall 10
 //void deleteFile(char* fileName)
 //{
 //    char dir[512];
@@ -139,7 +145,7 @@ void writeSector(char* buffer, int sector)
 //    int mapIndex;
 //
 //    readSector(dir, 2);
-//    readSector(map, 3);
+//    readSector(map, 1);
 //
 //    for (dirEntry = 0; dirEntry < 512; dirEntry += 32)
 //    {
@@ -195,9 +201,10 @@ void writeSector(char* buffer, int sector)
 //
 //    // writes dir and map char arrays back into their appropriate sectors
 //    writeSector(dir, 2);
-//    writeSector(map, 3);
+//    writeSector(map, 1);
 //}
 
+// syscall 3
 void readFile(char* fileName, char* buffer, int* sectorsRead)
 {
     int correctCharIndex; // Index used for comparing how many characters in fileName match with directory[fileEntry]
@@ -281,7 +288,7 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
     }
 }
 
-
+// syscall 10
 void deleteFile(char* fileName)
 {
     char dir[512];
@@ -396,7 +403,7 @@ void deleteFile(char* fileName)
     writeSector(map, 1);
 }
 
-
+// syscall 4
 void executeProgram(char* name)
 {
     int index = 0;
@@ -441,6 +448,7 @@ void executeProgram(char* name)
     }
 }
 
+//syscall 5
 void terminate()
 {
     char shellName[6];

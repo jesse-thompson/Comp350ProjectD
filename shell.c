@@ -123,8 +123,7 @@ void main()
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'e' &&
                  commandInput[2] == 'l' &&
-                 commandInput[3] == 'e' &&
-                 commandInput[4] == ' ')
+                 commandInput[3] == ' ')
         {
             // calls interrupt 10 deleteFile(char* fileName)
             syscall(10, fileName);
