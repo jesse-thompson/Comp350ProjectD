@@ -116,7 +116,7 @@ void main()
                 }
             }
             // if syscall breaks
-            syscall(0, "hi I broke", 0,0);
+            syscall(0, "hi I broke");
         }
 
         // FIXME: returns "Error: not a valid command" making length and syscall
@@ -131,7 +131,7 @@ void main()
             syscall(10, fileName);
 
             //if syscall breaks
-            syscall(0, "hi I broke\r\n", 0,0);
+            syscall(0, "hi I broke");
         }
 
 

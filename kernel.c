@@ -16,11 +16,10 @@ void readString(char*);
 void readSector(char*, int);
 void readFile(char*, char*, int*);
 void executeProgram(char*);
-void terminate();
-void handleInterrupt21(int,int,int,int);
-void writeSector(char*, int);
 void deleteFile(char*);
-
+void writeSector(char*, int);
+void handleInterrupt21(int,int,int,int);
+void terminate();
 
 void main()
 {
