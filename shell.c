@@ -115,6 +115,8 @@ void main()
                     syscall(9, '\n');
                 }
             }
+            // if syscall breaks
+            syscall(0, "hi I broke", 0,0);
         }
 
         // FIXME: returns "Error: not a valid command" making length and syscall
@@ -127,6 +129,9 @@ void main()
         {
             // calls interrupt 10 deleteFile(char* fileName)
             syscall(10, fileName);
+
+            //if syscall breaks
+            syscall(0, "hi I broke\r\n", 0,0);
         }
 
 
