@@ -123,7 +123,8 @@ void main()
         else if (commandInput[0] == 'd' &&
                  commandInput[1] == 'e' &&
                  commandInput[2] == 'l' &&
-                 commandInput[3] == ' ')
+                 commandInput[3] == 'e' &&
+                 commandInput[4] == ' ')
         {
             // calls interrupt 10 deleteFile(char* fileName)
             syscall(10, fileName);
@@ -135,8 +136,6 @@ void main()
             // calls handleInterrupt21() case 0: printString()
             syscall(0, "Error: not a valid command.");
         }
-
-        //Choose command to run
 
         // calls handleInterrupt21() case 0: printString()
         syscall(0, "\r\n");
