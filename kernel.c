@@ -179,7 +179,7 @@ void writeSector(char* buffer, int sector)
 //                // breaks when it finds a 0
 //                for (dirIndex = 6; dirIndex < 32; ++dirIndex)
 //                {
-//                    if(dir[dirEntry + 6] != 0)
+//                    if(dir[dirEntry + 6] != '\0')
 //                    {
 //                        fileMapLoc[dirIndex - 6] = dir[dirEntry + 6];
 //                        dir[dirEntry + 6] = '\0';
