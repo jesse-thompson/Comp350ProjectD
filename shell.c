@@ -14,18 +14,22 @@ void main()
         char fileBuffer[13312];
         int bufferIndex;
         int sectorsRead;
+	int sectorsReadTwo;
 
         char fileName[6];
-        char fileNameTwo[6];
+	char fileNameTwo[6];
         int commandIndex;
-        int currentIndex;
+	int currentIndex;
 
         char directory[512];
         int directoryIndex;
 
-
         // Initializing variables for repeated use of type commands
         sectorsRead = 0;
+
+        // Testing writeSector
+        //syscall(6, "Testing writeSector", 12);
+        syscall(6, "Another test of writeSector", 13);
 
         for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
         {
@@ -53,11 +57,12 @@ void main()
             commandInput[4] == ' ')
         {
             syscall(3, fileName, fileBuffer, &sectorsRead);
+	    syscall(0,fileName,0,0);
             if (sectorsRead > 0) //if 0, file was not found and no sectors were read
             {
                 // calls handleInterrupt21() case 0: printString()
                 syscall(0, fileBuffer, 0, 0);
-            }
+	    }
             else
             {
                 // calls handleInterrupt21() case 0: printString()
@@ -77,41 +82,68 @@ void main()
             // calls handleInterrupt21() case 4: executeProgram()
             syscall(4, fileName, 0, 0);
         }
-        
-                // Checking if copy command is being called
-        else if (commandInput[0] == 'c' &&
-                 commandInput[1] == 'o' &&
-                 commandInput[2] == 'p' &&
-                 commandInput[3] == 'y' &&
-                 commandInput[4] == ' ')
+
+        // checking if user wants to list the contents of the directory
+        // This is a pretty simple version of dir, later on we can make it print out the sectors/size of the files too
+        else if (commandInput[0] == 'd' &&
+                 commandInput[1] == 'i' &&
+                 commandInput[2] == 'r')
         {
-                // Reset buffer index
-                sectorsRead = 0;
-                for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
-                {
-                    fileBuffer[bufferIndex] = '\0';
-                }
+            syscall(2, directory, 2);
 
-                // Getting name of file to be created
-                for (currentIndex = 0; currentIndex < 6; currentIndex++)
+            for (directoryIndex = 0; directoryIndex < 512; directoryIndex += 32)
+            {
+                if (directory[directoryIndex] != 0)
                 {
-                        fileNameTwo[currentIndex] = commandInput[currentIndex + 12];
+                    // syscall(9) just calls printChar as an interrupt, not part of the project but is incredibly helpful here
+                    syscall(9, directory[directoryIndex]);
+                    syscall(9, directory[directoryIndex + 1]);
+                    syscall(9, directory[directoryIndex + 2]);
+                    syscall(9, directory[directoryIndex + 3]);
+                    syscall(9, directory[directoryIndex + 4]);
+                    syscall(9, directory[directoryIndex + 5]);
+                    syscall(9, '\r');
+                    syscall(9, '\n');
                 }
-
-                // Reading original file
-                syscall(3, fileName, fileBuffer, &sectorsRead);
-
-                // If original file name found, write file contents to new file
-                if (sectorsRead > 0)
-                {
-                        syscall(8, fileBuffer, fileNameTwo, sectorsRead);
-                }
-                else
-                {
-                        syscall(0, "Error! File not found!", 0, 0);
-                }
+            }
         }
 
+	// Checking if copy command is being called
+	else if (commandInput[0] == 'c' &&
+		 commandInput[1] == 'o' &&
+		 commandInput[2] == 'p' &&
+		 commandInput[3] == 'y' &&
+		 commandInput[4] == ' ')
+	{
+		// Reset buffer index
+        	for (bufferIndex = 0; bufferIndex < 13312; bufferIndex++)
+       		{
+        	    fileBuffer[bufferIndex] = '\0';
+	        }
+
+		// Getting name of file to be created
+		for (currentIndex = 0; currentIndex < 6; currentIndex++)
+		{//copy messag essag2
+			fileNameTwo[currentIndex] = commandInput[currentIndex + 12];
+		}
+		syscall(0,fileNameTwo,0,0);
+		// Reading original file
+
+		syscall(3, fileName, fileBuffer, &sectorsReadTwo);
+		syscall(0,fileName,0,0);
+
+		// If original file name found, write file contents to new file
+		if (sectorsReadTwo > 0)
+		{
+			syscall(8, fileBuffer, fileNameTwo, sectorsReadTwo);
+			syscall(0, "File found and writing contents", 0, 0);
+
+		}
+		else
+		{
+			syscall(0, "Error! File not found!", 0, 0);
+		}
+	}
 
         else
         {
