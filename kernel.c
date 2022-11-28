@@ -16,7 +16,9 @@ void readString(char*);
 void readSector(char*, int);
 void readFile(char*, char*, int*);
 void writeFile(char*, char*, int);
-void executeProgram(char* name);
+void deleteFile(char*);
+void createTextFile(char*);
+void executeProgram(char*);
 void terminate();
 void handleInterrupt21(int,int,int,int);
 
@@ -27,6 +29,7 @@ void main()
     char* filename = "tjtest";
     int numberOfSectors = 1;
     writeFile(buffer, filename, numberOfSectors);
+    deleteFile(filename);
 
     // These two functions are for steps 4-6
     makeInterrupt21();
@@ -57,7 +60,7 @@ void readString(char* chars)
     chars[currIndex] = interrupt(0x16, 0,0,0,0);
     printChar(chars[currIndex]);
 
-    while(chars[currIndex] != 0xd && currIndex < 80)
+    while(chars[currIndex] != 0xd && currIndex < 64)
     {
         char input = interrupt(0x16, 0,0,0,0);
         if(input == 0x8)
@@ -177,6 +180,50 @@ void readFile(char* fileName, char* buffer, int* sectorsRead)
     }
 }
 
+void deleteFile(char* filename)
+{
+    char directory[512];
+    char map[512];
+
+    int i;
+    int dirEntry;
+
+    readSector(map,1);
+    readSector(directory,2);
+    
+    for(dirEntry = 3; dirEntry < 16; dirEntry++)
+    {
+        if(directory[dirEntry*32] == filename[0] &&
+            directory[(dirEntry*32)+1] == filename[1] &&
+            directory[(dirEntry*32)+2] == filename[2] &&
+            directory[(dirEntry*32)+3] == filename[3] &&
+            directory[(dirEntry*32)+4] == filename[4] &&
+            directory[(dirEntry*32)+5] == filename[5])
+        {
+            break;
+        }
+    }
+
+    directory[dirEntry*32] = '\0';
+
+    for(i = 6; i < 32; i++)
+    {
+        if(directory[(dirEntry*32)+i] == '\0')
+        {
+            break;
+        }
+        else
+        {
+            map[(int)directory[(dirEntry*32+1)+i]] = 0x00;
+            directory[(dirEntry*32+1)+i] = '\0';
+        }
+    }
+
+    //Write the directory and map back to the disk
+    writeSector(map, 1);
+    writeSector(directory, 2);
+}
+
 void writeFile(char* buffer, char* filename, int numberOfSectors)
 {
     char directory[512];
@@ -233,6 +280,46 @@ void writeFile(char* buffer, char* filename, int numberOfSectors)
         writeSector(directory, 2);
     }
     
+}
+
+void createTextFile(char* filename)
+{
+    char lineBuffer[64];
+    char fileBuffer[512];
+    int numSectors = 0;
+    int fileSize = 0;
+    int i;
+    int j;
+
+    while(1)
+    {
+        readString(lineBuffer);
+        if(lineBuffer[0] == '\r')
+        {
+            break;        
+        }
+        else
+        {
+            for(j = 0; j < 64; j++)
+            {
+                fileBuffer[fileSize] = lineBuffer[j];
+                fileSize++;
+                if(lineBuffer[j] == '\n')
+                {
+                    break;
+                }
+
+            }
+        }
+    }
+    
+    while(fileSize>0)
+    {
+        fileSize = fileSize - 512;
+        numSectors += 1;
+    }
+
+    writeFile(fileBuffer, filename, numSectors);
 }
 
 void executeProgram(char* name)
@@ -318,11 +405,17 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
         case 6:
             writeSector(bx, cx);
             break;
+        case 7:
+            deleteFile(bx);
+            break;
         case 8:
             writeFile(bx, cx, dx);
             break;
         case 9:
             printChar(bx);
+            break;
+        case 10:
+            createTextFile(bx);
             break;
         default:
             printString("No interrupt function correlated with AX number");

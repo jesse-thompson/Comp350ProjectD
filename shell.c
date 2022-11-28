@@ -57,9 +57,36 @@ void main()
             syscall(6, " If you can read this, then the test shell command worked.", 27, 0);     
         }
 
+        if (commandInput[0] == 'd' && 
+            commandInput[1] == 'e' &&
+            commandInput[2] == 'l' &&
+            commandInput[3] == ' ')
+        {
+            for (commandIndex = 0; commandIndex < 6; commandIndex++)
+            {
+                fileName[commandIndex] = commandInput[commandIndex + 4];
+            }
+            syscall(7, fileName);     
+        }
+
+        else if (commandInput[0] == 'c' && 
+            commandInput[1] == 'r' &&
+            commandInput[2] == 'e' &&
+            commandInput[3] == 'a' &&
+            commandInput[4] == 't' &&
+            commandInput[5] == 'e' &&
+            commandInput[6] == ' ')
+        {
+            for (commandIndex = 0; commandIndex < 6; commandIndex++)
+            {
+                fileName[commandIndex] = commandInput[commandIndex + 7];
+            }
+            syscall(10, fileName);     
+        }
+
         // checking if the user wants to use the type command
         // this if statement is a little scuffed, but it'll work
-        if (commandInput[0] == 't' &&
+        else if (commandInput[0] == 't' &&
             commandInput[1] == 'y' &&
             commandInput[2] == 'p' &&
             commandInput[3] == 'e' &&
