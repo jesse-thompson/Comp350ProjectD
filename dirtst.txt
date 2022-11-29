@@ -1,0 +1,1 @@
+This file is to test if readFile can tell if a file has been deleted or not.
